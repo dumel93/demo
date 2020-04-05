@@ -27,7 +27,7 @@ public class EmployeeService {
 
     private static void parseFromCSV() {
         BufferedReader br = null;
-        String csvSplitBy = "    ";
+        String csvSplitBy = " {4}";
         List<Employee> employees = new ArrayList<>();
         // create an instance of BufferedReader
         try {
@@ -42,7 +42,7 @@ public class EmployeeService {
                 // use string.split to load a string array with the values from
                 // each line of the file, using a space as the delimiter
                 String[] attributes = line.split(csvSplitBy);
-                Employee employee = createEmployeeFromCSVDates(attributes);
+                Employee employee = createEmployeeFromCSV(attributes);
                 // adding employee into ArrayList
                 employees.add(employee);
                 // read next line before looping
@@ -51,7 +51,7 @@ public class EmployeeService {
             }
             // main method: show Salaries of employees group by job
             System.out.println("parse from CSV: \n");
-            showSalariesByJob(employees);
+            showSalariesGroupByJob(employees);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,9 +72,7 @@ public class EmployeeService {
     private static void parseFromJSON() {
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
-
         try {
-
             Object obj = jsonParser.parse(new FileReader(EmployeeService.urlJSON));
             // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
             JSONObject jsonObject = (JSONObject) obj;
@@ -86,14 +84,14 @@ public class EmployeeService {
 
             // main method: show Salaries of employees group by job
             System.out.println("parse from json: \n");
-            showSalariesByJob(employeeList);
+            showSalariesGroupByJob(employeeList);
 
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
-    private static void showSalariesByJob(List<Employee> employeeList) {
+    private static void showSalariesGroupByJob(List<Employee> employeeList) {
         // create hashMap grouping by job , key: job, value = list of employees
         Map<String, List<Employee>> mapGroupByJob = employeeList.stream().collect(
                 groupingBy(Employee::getJob));
@@ -136,7 +134,7 @@ public class EmployeeService {
 
     }
 
-    private static Employee createEmployeeFromCSVDates(String[] metadata) {
+    private static Employee createEmployeeFromCSV(String[] metadata) {
 
         List<String> stringList = Arrays.asList(metadata);
         // only string data excludes id and skip get(0)
@@ -144,7 +142,7 @@ public class EmployeeService {
         List<String> sublist = new ArrayList<>();
         for (String word : subStringList) {
             // fix string values
-            String word2 = word.replaceAll("  ", "").replaceAll(";", "").replaceAll("\"", "");
+            String word2 = word.replaceAll(" {2}", "").replaceAll(";", "").replaceAll("\"", "");
             sublist.add(word2);
         }
         // fix id
@@ -152,19 +150,16 @@ public class EmployeeService {
         String name = sublist.get(0);
         String surname = sublist.get(1);
         String job = sublist.get(2);
-        String salary = sublist.get(3);
-        BigDecimal money = new BigDecimal(salary.replaceAll(",", "."));
+        BigDecimal salary = new BigDecimal(sublist.get(3).replaceAll(",", "."));
 
         Employee employee = new Employee();
         employee.setId(id);
         employee.setName(name);
         employee.setSurname(surname);
         employee.setJob(job);
-        employee.setSalary(money);
+        employee.setSalary(salary);
 
         // create and return employee of this metadata
         return employee;
     }
 }
-
-

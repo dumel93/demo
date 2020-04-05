@@ -5,7 +5,7 @@
       "name": "Mark",
       "surname": "Green",
       "job": "Teacher",
-      "salary": "3540,20"
+      "salary": "20"
     },
     {
       "id": 2,
@@ -25,8 +25,8 @@
       "id": 4,
       "name": "Christopher",
       "surname": "Głuś",
-      "job": "Teacher",
-      "salary": "2700,10"
+      "job": "w",
+      "salary": "10"
     },
     {
       "id": 5,
